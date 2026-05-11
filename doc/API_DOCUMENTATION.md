@@ -69,7 +69,9 @@ Authenticate an existing user.
     "user": {
         "id": 1,
         "name": "John Doe",
-        "email": "john@example.com"
+        "email": "john@example.com",
+        "profile_photo": "profile-photos/avatar.jpg",
+        "profile_photo_url": "http://localhost:8000/storage/profile-photos/avatar.jpg"
     },
     "token": "2|xyz789..."
 }
@@ -114,6 +116,8 @@ Get the authenticated user with profile.
     "email": "john@example.com",
     "phone": "+1234567890",
     "role": "user",
+    "profile_photo": "profile-photos/avatar.jpg",
+    "profile_photo_url": "http://localhost:8000/storage/profile-photos/avatar.jpg",
     "profile": {
         "age": 28,
         "gender": "male",

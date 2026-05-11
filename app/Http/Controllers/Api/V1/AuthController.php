@@ -10,6 +10,7 @@ use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
@@ -27,7 +28,7 @@ class AuthController extends Controller
 
         return response()->json([
             'message' => 'Registration successful',
-            'user' => $user,
+            'user' => $this->userPayload($user),
             'token' => $token,
         ], 201);
     }
@@ -46,7 +47,7 @@ class AuthController extends Controller
 
         return response()->json([
             'message' => 'Login successful',
-            'user' => $user,
+            'user' => $this->userPayload($user),
             'token' => $token,
         ]);
     }
@@ -60,7 +61,9 @@ class AuthController extends Controller
 
     public function user(Request $request): JsonResponse
     {
-        return response()->json($request->user()->load('profile'));
+        return response()->json(
+            $this->userPayload($request->user()->load('profile')),
+        );
     }
 
     public function changePassword(ChangePasswordRequest $request): JsonResponse
@@ -72,5 +75,24 @@ class AuthController extends Controller
         return response()->json([
             'message' => 'Password changed successfully',
         ]);
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function userPayload(User $user): array
+    {
+        return array_merge($user->toArray(), [
+            'profile_photo_url' => $this->profilePhotoUrl($user->profile_photo),
+        ]);
+    }
+
+    private function profilePhotoUrl(?string $profilePhoto): ?string
+    {
+        if ($profilePhoto === null || $profilePhoto === '') {
+            return null;
+        }
+
+        return url(Storage::disk('public')->url($profilePhoto));
     }
 }
