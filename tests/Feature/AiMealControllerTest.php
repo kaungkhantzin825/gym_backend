@@ -59,9 +59,10 @@ class AiMealControllerTest extends TestCase
         Storage::fake('public');
 
         $user = User::factory()->create();
+        $agent = new MealAnalyzer;
 
         Ai::fakeAgent(MealAnalyzer::class, [function (): void {
-            throw RateLimitedException::forProvider('mistral', 429);
+            throw RateLimitedException::forProvider('gemini', 429);
         }]);
 
         $response = $this->actingAs($user, 'sanctum')->postJson('/api/v1/ai/meal/analyze', [
@@ -71,7 +72,7 @@ class AiMealControllerTest extends TestCase
 
         $response->assertStatus(429)->assertJson([
             'message' => 'Meal scan is temporarily unavailable because the AI provider is rate limited. Please retry shortly.',
-            'provider' => 'mistral',
+            'provider' => $agent->provider(),
         ]);
 
         Storage::disk('public')->assertDirectoryEmpty('meal-scans');

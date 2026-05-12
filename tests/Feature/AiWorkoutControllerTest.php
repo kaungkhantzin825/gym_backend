@@ -24,14 +24,14 @@ class AiWorkoutControllerTest extends TestCase
         Exercise::factory()->for($admin)->create([
             'exercise_name' => 'Bench Press',
             'exercise_type' => 'strength',
-            'exercise_tutorial_url' => Storage::url('exercise_tutorials/1.gif'),
+            'exercise_tutorial_url' => 'exercise_tutorials/bench-press.gif',
             'exercise_time' => now(),
         ]);
 
         Exercise::factory()->for($admin)->create([
             'exercise_name' => 'Walking',
             'exercise_type' => 'cardio',
-            'exercise_tutorial_url' => Storage::url('exercise_tutorials/1.gif'),
+            'exercise_tutorial_url' => 'exercise_tutorials/walking.gif',
             'exercise_time' => now(),
         ]);
     }
@@ -59,7 +59,7 @@ class AiWorkoutControllerTest extends TestCase
 
         $this->assertStringContainsString('Admin-managed exercise catalog:', $instructions);
         $this->assertStringContainsString('Bench Press', $instructions);
-        $this->assertStringContainsString('exercise_tutorials', $instructions);
+        $this->assertStringContainsString('bench-press.gif', $instructions);
 
         Ai::fakeAgent(WorkoutGenerator::class, [function (string $prompt): array {
             $this->assertStringContainsString('Fitness level: intermediate', $prompt);
@@ -97,7 +97,7 @@ class AiWorkoutControllerTest extends TestCase
             'exercises' => [[
                 'exercise_name' => 'Bench Press',
                 'exercise_type' => 'strength',
-                'exercise_tutorial_url' => url('/storage/exercise_tutorials/1.gif'),
+                'exercise_tutorial_url' => Storage::disk('public')->url('exercise_tutorials/bench-press.gif'),
             ]],
         ]);
     }
@@ -136,7 +136,7 @@ class AiWorkoutControllerTest extends TestCase
             'exercises' => [[
                 'exercise_name' => 'Walking',
                 'exercise_type' => 'cardio',
-                'exercise_tutorial_url' => url('/storage/exercise_tutorials/1.gif'),
+                'exercise_tutorial_url' => Storage::disk('public')->url('exercise_tutorials/walking.gif'),
             ]],
         ]);
 

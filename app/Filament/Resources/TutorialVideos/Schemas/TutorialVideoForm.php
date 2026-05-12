@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\TutorialVideos\Schemas;
 
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -17,11 +18,22 @@ class TutorialVideoForm
                     ->required(),
                 Textarea::make('description')
                     ->columnSpanFull(),
-                TextInput::make('video_url')
-                    ->url()
+                FileUpload::make('video_url')
+                    ->label('Video')
+                    ->disk('public')
+                    ->directory('tutorial-videos/videos')
+                    ->visibility('public')
+                    ->acceptedFileTypes(['video/mp4', 'video/quicktime', 'video/webm'])
+                    ->maxSize(102400)
                     ->required(),
-                TextInput::make('thumbnail_url')
-                    ->url(),
+                FileUpload::make('thumbnail_url')
+                    ->label('Thumbnail')
+                    ->disk('public')
+                    ->directory('tutorial-videos/thumbnails')
+                    ->visibility('public')
+                    ->image()
+                    ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
+                    ->maxSize(10240),
                 Select::make('gender_target')
                     ->options([
                         'boy' => 'Boy',

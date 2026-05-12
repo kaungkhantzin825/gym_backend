@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Exercises\Schemas;
 
 use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
@@ -26,9 +27,15 @@ class ExerciseForm
                         'sports' => 'Sports',
                     ])
                     ->required(),
-                TextInput::make('exercise_tutorial_url')
-                    ->url()
-                    ->maxLength(255),
+                FileUpload::make('exercise_tutorial_url')
+                    ->label('Exercise tutorial GIF')
+                    ->disk('public')
+                    ->directory('exercise_tutorials')
+                    ->visibility('public')
+                    ->image()
+                    ->imageEditor()
+                    ->acceptedFileTypes(['image/gif'])
+                    ->maxSize(10240),
                 TextInput::make('duration_minutes')
                     ->numeric(),
                 TextInput::make('calories_burned')

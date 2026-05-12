@@ -7,8 +7,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use Laravel\Ai\Files\Image;
 use Laravel\Ai\Exceptions\RateLimitedException;
+use Laravel\Ai\Files\Image;
 
 class AiMealController extends Controller
 {
@@ -22,6 +22,7 @@ class AiMealController extends Controller
         $imagePath = $request->file('image')->store('meal-scans', 'public');
 
         $agent = new MealAnalyzer;
+        $provider = $agent->provider();
 
         try {
             $response = $agent->prompt(
@@ -33,7 +34,7 @@ class AiMealController extends Controller
 
             return response()->json([
                 'message' => 'Meal scan is temporarily unavailable because the AI provider is rate limited. Please retry shortly.',
-                'provider' => 'mistral',
+                'provider' => $provider,
             ], 429);
         }
 

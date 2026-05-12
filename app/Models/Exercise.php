@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Storage;
 
 class Exercise extends Model
 {
@@ -44,13 +45,22 @@ class Exercise extends Model
     public static function adminCatalog(): Collection
     {
         return static::query()
-            ->select(['exercise_name', 'exercise_type', 'exercise_tutorial_url'])
+            ->select([
+                'exercise_name',
+                'exercise_type',
+                'exercise_tutorial_url',
+            ])
             ->whereNotNull('exercise_tutorial_url')
             ->whereHas('user', fn (Builder $query) => $query->where('role', 'admin'))
             ->orderBy('exercise_name')
             ->get()
             ->unique(fn (self $exercise) => mb_strtolower($exercise->exercise_name))
             ->values();
+    }
+
+    public function resolvedTutorialUrl(): ?string
+    {
+        return $this->resolveTutorialMediaUrl($this->exercise_tutorial_url);
     }
 
     public function user(): BelongsTo
@@ -61,5 +71,22 @@ class Exercise extends Model
     public function workoutSets(): HasMany
     {
         return $this->hasMany(WorkoutSet::class);
+    }
+
+    private function resolveTutorialMediaUrl(?string $path): ?string
+    {
+        if ($path === null || $path === '') {
+            return null;
+        }
+
+        if (str_starts_with($path, 'http://') || str_starts_with($path, 'https://')) {
+            return $path;
+        }
+
+        if (str_starts_with($path, '/storage/')) {
+            return url($path);
+        }
+
+        return Storage::disk('public')->url($path);
     }
 }

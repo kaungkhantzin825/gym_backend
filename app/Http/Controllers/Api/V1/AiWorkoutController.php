@@ -93,26 +93,11 @@ class AiWorkoutController extends Controller
 
             $exercise['exercise_name'] = $catalogExercise->exercise_name;
             $exercise['exercise_type'] = $catalogExercise->exercise_type;
-            $exercise['exercise_tutorial_url'] = $this->normalizeExerciseTutorialUrl(
-                $catalogExercise->exercise_tutorial_url,
-            );
+            $exercise['exercise_tutorial_url'] = $catalogExercise->resolvedTutorialUrl();
 
             return $exercise;
         }, $payload['exercises']);
 
         return $payload;
-    }
-
-    private function normalizeExerciseTutorialUrl(?string $exerciseTutorialUrl): ?string
-    {
-        if ($exerciseTutorialUrl === null || $exerciseTutorialUrl === '') {
-            return null;
-        }
-
-        if (str_starts_with($exerciseTutorialUrl, 'http://') || str_starts_with($exerciseTutorialUrl, 'https://')) {
-            return $exerciseTutorialUrl;
-        }
-
-        return url($exerciseTutorialUrl);
     }
 }

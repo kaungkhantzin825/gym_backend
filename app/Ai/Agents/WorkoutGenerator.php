@@ -128,7 +128,7 @@ class WorkoutGenerator implements Agent, HasStructuredOutput
             ->map(fn (Exercise $exercise) => [
                 'exercise_name' => $exercise->exercise_name,
                 'exercise_type' => $exercise->exercise_type,
-                'exercise_tutorial_url' => $exercise->exercise_tutorial_url,
+                'exercise_tutorial_url' => $exercise->resolvedTutorialUrl(),
             ])
             ->all();
     }

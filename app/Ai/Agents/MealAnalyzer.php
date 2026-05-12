@@ -14,12 +14,12 @@ class MealAnalyzer implements Agent, HasStructuredOutput
 
     public function provider(): string
     {
-        return 'mistral';
+        return 'gemini';
     }
 
     public function model(): string
     {
-        return 'pixtral-large-latest';
+        return 'gemini-3-flash-preview';
     }
 
     /**
